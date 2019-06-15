@@ -45,6 +45,9 @@ public class CacheConfiguration {
             createCache(cm, br.victal.pluscape.domain.User.class.getName() + ".authorities");
             createCache(cm, br.victal.pluscape.domain.Size.class.getName());
             createCache(cm, br.victal.pluscape.domain.Category.class.getName());
+            createCache(cm, br.victal.pluscape.domain.Product.class.getName());
+            createCache(cm, br.victal.pluscape.domain.Product.class.getName() + ".sizes");
+            createCache(cm, br.victal.pluscape.domain.Product.class.getName() + ".categories");
             // jhipster-needle-ehcache-add-entry
         };
     }
