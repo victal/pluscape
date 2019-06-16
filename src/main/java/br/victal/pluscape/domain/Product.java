@@ -30,6 +30,7 @@ public class Product implements Serializable {
     private String name;
 
     @NotNull
+    @javax.validation.constraints.Size(min = 1, max = 10000)
     @Column(name = "description", nullable = false)
     private String description;
 
