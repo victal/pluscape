@@ -26,4 +26,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select product from Product product left join fetch product.sizes left join fetch product.categories where product.id =:id")
     Optional<Product> findOneWithEagerRelationships(@Param("id") Long id);
 
+    @Query(value = "select distinct product from Product product left join fetch product.sizes left join fetch product.categories c where c.name = :category",
+        countQuery = "select count(distinct product) from Product product")
+    Page<Product> findAllWithEagerRelationshipsByCategory(Pageable pageable, @Param("category") String category);
+
+    @Query(value = "select distinct product from Product product left join product.categories c where c.name = :category")
+    Page<Product> findAllByCategory(Pageable pageable, @Param("category") String category);
+
 }
