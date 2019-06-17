@@ -11,6 +11,7 @@
         Added the entity Category.
     -->
     <changeSet id="20190615175033-1" author="jhipster">
+        <createSequence sequenceName="SEQ_CATEGORY" startValue="1000" incrementBy="1"/>
         <createTable tableName="category">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>

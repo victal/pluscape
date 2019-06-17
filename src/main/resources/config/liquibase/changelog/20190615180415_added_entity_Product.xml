@@ -11,6 +11,7 @@
         Added the entity Product.
     -->
     <changeSet id="20190615180415-1" author="jhipster">
+        <createSequence sequenceName="SEQ_PRODUCT" startValue="1000" incrementBy="1"/>
         <createTable tableName="product">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
