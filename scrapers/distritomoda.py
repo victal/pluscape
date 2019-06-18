@@ -5,7 +5,7 @@ import requests
 import psycopg2
 from bs4 import BeautifulSoup
 
-base_url = "https://www.vkmodaplussize.com.br/plus-size-feminino/?page=2"
+initial_url = "https://www.distritomoda.com.br/plus-size"
 
 conn = psycopg2.connect(host="localhost", port=5432, dbname="pluscape", user="pluscape", password="pluscape")
 cur = conn.cursor()
@@ -22,43 +22,66 @@ for result in cur:
 cur.close()
 
 
-def get_dados_produtos():
+def get_links_categorias():
+    initial_page = BeautifulSoup(requests.get(initial_url).text, 'html.parser')
+    links = initial_page.select(".menu.lateral ul.nivel-dois > li > a")
+    return {link.text.strip(): link.attrs['href'] for link in links}
+
+
+def get_dados_produtos(categoria, link):
     current_page = 1
     has_results = True
-    url = base_url
+    url = link
     data_produtos = []
     while has_results:
         print("Loading page %d" % current_page)
         if current_page > 1:
-            url = url + "?page=%d" % current_page
-
+            url = link + "?pagina=%d" % current_page
+        print(url)
         main_page = BeautifulSoup(requests.get(url).text, 'html.parser')
-        links = main_page.select('.ProductDetails a')
-        if len(links) == 0:
+        itens = main_page.select('#listagemProdutos .listagem-item')
+        if len(itens) == 0:
             return data_produtos
-        for link in links:
+        for item in itens:
+            if 'indisponivel' in item.attrs['class']:
+                continue  # Item indisponivel, não tem por que mostrar nem tem dados
             data_produto = {}
-            link_url = link.attrs['href']
+            link_url = item.select_one('a.produto-sobrepor').attrs['href']
             detail_page = BeautifulSoup(requests.get(link_url).text, 'html.parser')
-            main_block = detail_page.select_one(".ProductMain")
-            data_produto['name'] = main_block.select_one("h1").text
-            data_produto["current_price"] = main_block.select_one(".discountPrice > strong > .ValorProduto").text
-            standard_price_tag = main_block.select_one(".RetailPrice .ValorProduto")
-            if standard_price_tag is None:
-                standard_price = data_produto['current_price']
-            else:
-                standard_price = standard_price_tag.text
-            data_produto['standard_price'] = standard_price
+            main_block = detail_page.select_one(".info-principal-produto").parent
+            data_produto['name'] = main_block.select_one("h1.nome-produto").text
+            print(data_produto['name'])
+            standard_price_tag = main_block.select_one(".preco-venda")
+            if standard_price_tag is not None:
+                standard_price_money = standard_price_tag.text
+                data_produto["standard_price"] = standard_price_money.strip().split(' ')[1].replace(',', '.')
 
-            data_produto["tamanhos"] = [li.text for li in main_block.select(".DetailRow_tamanho li")]
+            current_price_tag = main_block.select_one("strong.preco-promocional")
+            if current_price_tag is None:
+                if standard_price_tag is None:
+                    continue # item sem preço
+                else:
+                    data_produto['current_price'] = data_produto['standard_price']
+            else:
+                current_price = current_price_tag.text.strip().split(' ')[1]
+                data_produto['current_price'] = current_price.replace(',', '.')
+                if standard_price_tag is None:
+                    data_produto['standard_price'] = data_produto['current_price']
+
+            atributos = detail_page.select(".atributo-comum")
+            for atributo in atributos:
+                if 'Tamanhos' in atributo.select_one('span').text:
+                    data_produto["tamanhos"] = [a.text.strip() for a in atributo.select("a.atributo-item")]
+
             data_produto["link"] = link_url
-            image_link = detail_page.select_one("a#zoom-area").attrs['href']
+
+            image_link = detail_page.select_one("img#imagemProduto").attrs['src']
             response_image = requests.get(image_link)
             data_produto["image"] = response_image.content
             data_produto["image_type"] = response_image.headers.get('Content-Type')
-            data_produto['description'] = detail_page.select_one(".ProductDescription > p").text.strip()
-            categoria = data_produto['name'].lower().split(" ")[0].strip()
-            data_produto['categorias'] = [categoria]
+
+            data_produto['description'] = detail_page.select_one("#descricao > p").text.strip()
+            data_produto['categorias'] = [categoria.lower()]
             data_produtos.append(data_produto)
         current_page += 1
     return data_produtos
@@ -90,8 +113,11 @@ def load_produtos(data_produtos, connection):
                         (product_id, known_categories[categoria]))
 
 
-data_produtos = get_dados_produtos()
-load_produtos(data_produtos, conn)
-conn.commit()
+categorias = get_links_categorias()
+for categoria, link in categorias.items():
+    print("Loading " + categoria)
+    data_produtos = get_dados_produtos(categoria, link)
+    load_produtos(data_produtos, conn)
+    conn.commit()
 
 conn.close()

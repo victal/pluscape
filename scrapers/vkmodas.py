@@ -4,14 +4,8 @@
 import requests
 import psycopg2
 from bs4 import BeautifulSoup
-base_url = "https://www.posthaus.com.br/"
-cdn_url = "https://ph-cdn1.ecosweb.com.br/Web/posthaus/foto/"
 
-api_url = 'https://www.posthaus.com.br/plus-size-feminino?action=listar'
-resp = requests.get(api_url)
-data = resp.json()
-num_paginas = data.get('totalPaginas')
-print(num_paginas)
+base_url = "https://www.vkmodaplussize.com.br/plus-size-feminino/"
 
 conn = psycopg2.connect(host="localhost", port=5432, dbname="pluscape", user="pluscape", password="pluscape")
 cur = conn.cursor()
@@ -28,35 +22,45 @@ for result in cur:
 cur.close()
 
 
-def get_dados_produtos(data):
-    produtos = data.get('listaProdutos')
+def get_dados_produtos():
+    current_page = 1
+    has_results = True
+    url = base_url
     data_produtos = []
-    for produto in produtos:
-        data_produto = {}
-        data_produto['name'] = produto.get('nome')
-        data_produto['current_price'] = current_price = produto.get('preco')
-        standard_price = produto.get("de")
-        if standard_price == 0:
-            standard_price = current_price
-        data_produto['standard_price'] = standard_price
-        data_produto["link"] = base_url + produto.get('url')
-        image_link = cdn_url + produto.get('imagemDesktop')
-        response_image = requests.get(image_link)
-        data_produto["image"] = response_image.content
-        data_produto["image_type"] = response_image.headers.get('Content-Type')
-        detail_page = requests.get(data_produto["link"]).text
-        page = BeautifulSoup(detail_page, 'html.parser')
-        data_produto["tamanhos"] = set([div.text.strip() for div in page.select("#tamanhos > .combo-com-estoque")])
-        data_produto['description'] = page.select_one("#tx-descricao > .descprod").text.replace("+ detalhes", "").strip()
-        categoria_tags = page.select(".breadcrumb-item")[1:]  # The first is just 'Plus Size Feminino'
-        data_produto["categorias"] = set()
-        for tag in categoria_tags:
-            text = tag.text.strip()
-            if text.lower().endswith('plus size'):
-                text = text[0: -10]
-            data_produto["categorias"].add(text)
-        data_produtos.append(data_produto)
+    while has_results:
+        print("Loading page %d" % current_page)
+        if current_page > 1:
+            url = base_url + "?page=%d" % current_page
+        print(url)
+        main_page = BeautifulSoup(requests.get(url).text, 'html.parser')
+        links = main_page.select('.ProductDetails a')
+        if len(links) == 0:
+            return data_produtos
+        for link in links:
+            data_produto = {}
+            link_url = link.attrs['href']
+            detail_page = BeautifulSoup(requests.get(link_url).text, 'html.parser')
+            main_block = detail_page.select_one(".ProductMain")
+            data_produto['name'] = main_block.select_one("h1").text
+            data_produto["current_price"] = main_block.select_one(".discountPrice > strong > .ValorProduto").text
+            standard_price_tag = main_block.select_one(".RetailPrice .ValorProduto")
+            if standard_price_tag is None:
+                standard_price = data_produto['current_price']
+            else:
+                standard_price = standard_price_tag.text
+            data_produto['standard_price'] = standard_price
 
+            data_produto["tamanhos"] = [li.text for li in main_block.select(".DetailRow_tamanho li")]
+            data_produto["link"] = link_url
+            image_link = detail_page.select_one("a#zoom-area").attrs['href']
+            response_image = requests.get(image_link)
+            data_produto["image"] = response_image.content
+            data_produto["image_type"] = response_image.headers.get('Content-Type')
+            data_produto['description'] = detail_page.select_one(".ProductDescription > p").text.strip()
+            categoria = data_produto['name'].lower().split(" ")[0].strip()
+            data_produto['categorias'] = [categoria]
+            data_produtos.append(data_produto)
+        current_page += 1
     return data_produtos
 
 
@@ -86,15 +90,8 @@ def load_produtos(data_produtos, connection):
                         (product_id, known_categories[categoria]))
 
 
-data_produtos = get_dados_produtos(data)
+data_produtos = get_dados_produtos()
 load_produtos(data_produtos, conn)
-
-for page in range(2, min(num_paginas + 1,10)):
-    print("Loading page %d" % page)
-    resp = requests.get(api_url + "&pag=%d" %page)
-    data = resp.json()
-    data_produtos = get_dados_produtos(data)
-    load_produtos(data_produtos, conn)
-    conn.commit()
+conn.commit()
 
 conn.close()
