@@ -22,7 +22,9 @@ export type IProductState = IPaginationBaseState;
 
 export class Pluscape extends React.Component<IProductProps, IProductState> {
   state: IProductState = {
-    ...getSortState(this.props.location, 3)
+    ...getSortState(this.props.location, 3),
+    sort: 'currentPrice',
+    order: 'desc'
   };
 
   componentDidMount() {
