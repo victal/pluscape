@@ -1,7 +1,9 @@
-version: '3'
+version: '3.7'
 services:
   postgres:
     image: postgres
+    ports:
+      - '5433:5432'
     environment:
       POSTGRES_USER: pluscape
       POSTGRES_PASSWORD: pluscape
