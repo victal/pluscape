@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: pluscape
+      POSTGRES_PASSWORD: pluscape
+      POSTGRES_DB: pluscape
+  backend:
+    image: victal/pluscape-backend
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: prod,swagger
