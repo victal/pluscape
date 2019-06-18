@@ -15,9 +15,8 @@ export const BrandIcon = props => (
 
 export const Brand = props => (
   <NavbarBrand tag={Link} to="/" className="brand-logo">
-    <BrandIcon />
     <span className="brand-title">
-      <Translate contentKey="global.title">Pluscape</Translate>
+      <Translate contentKey="global.title">Pluscapé</Translate>
     </span>
     <span className="navbar-version">{appConfig.VERSION}</span>
   </NavbarBrand>
@@ -29,6 +28,17 @@ export const Home = props => (
       <FontAwesomeIcon icon="home" />
       <span>
         <Translate contentKey="global.menu.home">Home</Translate>
+      </span>
+    </NavLink>
+  </NavItem>
+);
+
+export const About = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/about" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="question-circle" />
+      <span>
+        <Translate contentKey="global.menu.about">About</Translate>
       </span>
     </NavLink>
   </NavItem>

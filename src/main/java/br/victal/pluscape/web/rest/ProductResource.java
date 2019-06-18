@@ -7,6 +7,10 @@ import br.victal.pluscape.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,7 +98,7 @@ public class ProductResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getAllProducts(Pageable pageable, @RequestParam MultiValueMap<String, String> queryParams, UriComponentsBuilder uriBuilder, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
+    public ResponseEntity<List<Product>> getAllProducts(Pageable pageable, @RequestParam MultiValueMap<String, String> queryParams, UriComponentsBuilder uriBuilder, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get a page of Products");
         Page<Product> page;
         if (eagerload) {
@@ -113,13 +117,21 @@ public class ProductResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
+    @ApiOperation(value = "Get all products per category", response = Product.class, responseContainer = "List")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "page", defaultValue = "0", type = "int"),
+        @ApiImplicitParam(name = "size", defaultValue = "3", type = "int")
+    })
     @GetMapping("/products/category")
-    public ResponseEntity<List<Product>> getAllProductsByCategory(Pageable pageable,
-                                                                  @RequestParam MultiValueMap<String, String> queryParams,
-                                                                  UriComponentsBuilder uriBuilder,
-                                                                  @RequestParam String category,
-                                                                  @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
-        log.debug("REST request to get a page of Products");
+    public ResponseEntity<List<Product>> getAllProductsByCategory(
+            Pageable pageable,
+            @ApiParam(hidden = true)
+            @RequestParam MultiValueMap<String, String> queryParams,
+            UriComponentsBuilder uriBuilder,
+            @RequestParam String category,
+            @ApiParam(hidden = true)
+            @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+        log.debug("REST request to get a page of Products per category");
         Page<Product> page;
         if (eagerload) {
             page = productRepository.findAllWithEagerRelationshipsByCategory(pageable, category);
