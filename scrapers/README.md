@@ -58,5 +58,5 @@ docker build -t pluscape-scrapers:latest .
 Bem como a última versão dos scripts encontra-se usualmente disponibilizada no [Docker Hub](https://cloud.docker.com/u/victal/repository/docker/victal/pluscape-scrapers) podendo ser executada como
 
 ```
-docker run -it -e <variáveis de ambiente definidas acima> --net=host victal/pluscape-scrapers
+docker run -it --rm -e <variáveis de ambiente definidas acima> --net=host victal/pluscape-scrapers
 ```
