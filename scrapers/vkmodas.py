@@ -46,9 +46,9 @@ def get_dados_produtos(current_page=1):
         data_produto["image_type"] = response_image.headers.get('Content-Type')
         data_produto['description'] = detail_page.select_one(".ProductDescription > p").text.strip()
         categoria = data_produto['name'].lower().split(" ")[0].strip()
-        if not categoria.endswith('s'):
+        if not categoria.endswith('s') and len(categoria.split(' ')) == 1:
             categoria += 's'
-        data_produto['categorias'] = [categoria]
+        data_produto['categorias'] = [categoria.title()]
         data_produtos.append(data_produto)
     return data_produtos
 

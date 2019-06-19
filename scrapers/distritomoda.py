@@ -69,7 +69,7 @@ def get_dados_produtos(categoria, link, current_page):
 
         if not categoria.lower().endswith('s'):
             categoria = categoria.lower() + 's'
-        data_produto['categorias'] = [categoria]
+        data_produto['categorias'] = [categoria.title()]
 
         data_produtos.append(data_produto)
     return data_produtos
