@@ -71,8 +71,8 @@ out/
 ######################
 # Maven
 ######################
-backend/log/
-backend/target/
+log/
+target/
 
 ######################
 # Gradle
