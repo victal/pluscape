@@ -54,7 +54,7 @@ public class Product implements Serializable {
     @Column(name = "picture_content_type", nullable = false)
     private String pictureContentType;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "product_sizes",
                joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),

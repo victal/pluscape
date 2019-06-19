@@ -98,7 +98,7 @@ public class ProductResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getAllProducts(Pageable pageable, @RequestParam MultiValueMap<String, String> queryParams, UriComponentsBuilder uriBuilder, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+    public ResponseEntity<List<Product>> getAllProducts(Pageable pageable, @RequestParam MultiValueMap<String, String> queryParams, UriComponentsBuilder uriBuilder, @ApiParam(hidden = true) @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Products");
         Page<Product> page;
         if (eagerload) {
@@ -130,7 +130,7 @@ public class ProductResource {
             UriComponentsBuilder uriBuilder,
             @RequestParam String category,
             @ApiParam(hidden = true)
-            @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+            @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Products per category");
         Page<Product> page;
         if (eagerload) {
