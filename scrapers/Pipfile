@@ -7,9 +7,7 @@ verify_ssl = true
 
 [packages]
 requests = "*"
-beautifulsoup = "*"
 beautifulsoup4 = "*"
-psycopg2 = "*"
 psycopg2-binary = "*"
 
 [requires]
