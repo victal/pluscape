@@ -101,7 +101,7 @@ export class Pluscape extends React.Component<IProductProps, IProductState> {
                               </Row>
                               <Row>
                                 <Col xs="12" sm="12" md="6" style={{ padding: '0' }}>
-                                  <img src={`data:${product.pictureContentType};base64,${product.picture}`} />
+                                  <img src={`data:${product.pictureContentType};base64,${product.picture}`} style={{ maxWidth: '100%' }} />
                                 </Col>
                                 <Col xs="12" sm="12" md="5" style={{ textAlign: 'justify' }}>
                                   <p>{product.description}</p>
@@ -120,7 +120,17 @@ export class Pluscape extends React.Component<IProductProps, IProductState> {
                               <Row>
                                 <strong>Tamanhos: </strong>
                                 {product.sizes
-                                  .sort((s1, s2) => s1.id - s2.id)
+                                  .sort((s1, s2) => {
+                                    if (s1.description.length !== s2.description.length) {
+                                      return s1.description.length < s2.description.length ? -1 : 1;
+                                    } else {
+                                      if (s1.description.length > 1) {
+                                        return s1.description < s2.description ? -1 : 1;
+                                      } else {
+                                        return s2.description < s1.description ? -1 : 1;
+                                      }
+                                    }
+                                  })
                                   .map((size, j) => (
                                     <p>{size.description}&nbsp;</p>
                                   ))}
