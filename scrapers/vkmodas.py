@@ -35,7 +35,10 @@ def get_dados_produtos(current_page=1):
             standard_price = standard_price_tag.text
         data_produto['standard_price'] = standard_price
 
-        data_produto["tamanhos"] = [li.text for li in main_block.select(".DetailRow_tamanho li")]
+        data_produto["current_price"] = data_produto["current_price"].replace(',', '.')
+        data_produto['standard_price'] = data_produto['standard_price'].replace(',', '.')
+
+        data_produto["tamanhos"] = [li.text.strip() for li in main_block.select(".DetailRow_tamanho li")]
         data_produto["link"] = link_url
         image_link = detail_page.select_one("a#zoom-area").attrs['href']
         response_image = requests.get(image_link)
