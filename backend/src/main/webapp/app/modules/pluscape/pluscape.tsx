@@ -84,7 +84,7 @@ export class Pluscape extends React.Component<IProductProps, IProductState> {
             loadMore={this.handleLoadMore}
             hasMore={this.hasMore}
             loader={<div className="loader" />}
-            threshold={0}
+            threshold={10}
             initialLoad={false}
           >
             {productList && productList.length > 0 ? (
