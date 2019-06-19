@@ -14,9 +14,9 @@ config = {
     "DB_USER": "pluscape",
     "DB_PASSWD": "pluscape",
     "SCRAPERS": "posthaus,distritomoda,vkmodas",
-    "POSTHAUS_MAX_PAGES": 5,
-    "DISTRITOMODA_MAX_PAGES": 2,
-    "VKMODAS_MAX_PAGES": 5
+    "POSTHAUS_MAX_PAGES": None,
+    "DISTRITOMODA_MAX_PAGES": None,
+    "VKMODAS_MAX_PAGES": None
 }
 
 
@@ -44,6 +44,7 @@ def clear_current_product_data(config):
     cur = conn.cursor()
     cur.execute('truncate table product cascade')
 
+
 if __name__ == '__main__':
     print("Current configuration: ")
     print("Override the following environment variables to change configs.")
@@ -60,10 +61,10 @@ if __name__ == '__main__':
     clear_current_product_data(config)
     if 'posthaus' in config['SCRAPERS'].split(','):
         load_posthaus(config, known_categories=known_categories, known_sizes=known_sizes,
-                      max_pages=config['POSTHAUS_MAX_PAGES'])
+                      max_pages=int(config['POSTHAUS_MAX_PAGES']))
     if 'distritomoda' in config['SCRAPERS'].split(','):
         load_distritomoda(config, known_categories=known_categories, known_sizes=known_sizes,
-                          max_pages=config['DISTRITOMODA_MAX_PAGES'])
+                          max_pages=int(config['DISTRITOMODA_MAX_PAGES']))
     if 'vkmodas' in config['SCRAPERS'].split(','):
         load_vkmodas(config, known_categories=known_categories, known_sizes=known_sizes,
-                     max_pages=config['VKMODAS_MAX_PAGES'])
+                     max_pages=int(config['VKMODAS_MAX_PAGES']))
