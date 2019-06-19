@@ -1,9 +1,9 @@
 ######################
 # Project Specific
 ######################
-/src/main/webapp/content/css/main.css
-/target/classes/static/**
-/src/test/javascript/coverage/
+backend/src/main/webapp/content/css/main.css
+backend/target/classes/static/**
+backend/src/test/javascript/coverage/
 
 ######################
 # Node
@@ -71,8 +71,8 @@ out/
 ######################
 # Maven
 ######################
-/log/
-/target/
+backend/log/
+backend/target/
 
 ######################
 # Gradle
