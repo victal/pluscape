@@ -35,7 +35,6 @@ def get_dados_produtos(categoria, link, current_page):
         detail_page = BeautifulSoup(requests.get(link_url).text, 'html.parser')
         main_block = detail_page.select_one(".info-principal-produto").parent
         data_produto['name'] = main_block.select_one("h1.nome-produto").text
-        print(data_produto['name'])
         standard_price_tag = main_block.select_one(".preco-venda")
         if standard_price_tag is not None:
             standard_price_money = standard_price_tag.text
@@ -67,8 +66,9 @@ def get_dados_produtos(categoria, link, current_page):
 
         data_produto['description'] = detail_page.select_one("#descricao > p").text.strip()
 
-        if not categoria.lower().endswith('s'):
-            categoria = categoria.lower() + 's'
+        categoria = categoria.lower()
+        if categoria.endswith('s') and len(categoria.split(' ')) == 1 and categoria != 'jeans':
+            categoria = categoria[0:-1]
         data_produto['categorias'] = [categoria.title()]
 
         data_produtos.append(data_produto)

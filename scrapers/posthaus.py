@@ -36,11 +36,11 @@ def get_page_product_data(page_data):
         categoria_tags = page.select(".breadcrumb-item")[1:]  # The first is just 'Plus Size Feminino'
         data_produto["categorias"] = set()
         for tag in categoria_tags:
-            categoria = tag.text.strip()
-            if categoria.lower().endswith('plus size'):
+            categoria = tag.text.strip().lower()
+            if categoria.endswith('plus size'):
                 categoria = categoria[0: -10]
-            if not categoria.endswith('s') and len(categoria.split(' ')) == 1:
-                categoria += 's'
+            if categoria.endswith('s') and len(categoria.split(' ')) == 1 and categoria != 'jeans':
+                categoria = categoria[0:-1]
             data_produto["categorias"].add(categoria.title())
         data_produtos.append(data_produto)
 
