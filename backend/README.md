@@ -1,171 +1,101 @@
-# pluscape
+# pluscape-backend
 
-This application was generated using JHipster 6.1.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.1.0](https://www.jhipster.tech/documentation-archive/v6.1.0).
+Aplicação em Java que disponibiliza APIs REST para consultas de dados de roupas plus-size a partir dos dados dos sites "Posthaus", "Distritomoda" e "VK modas".
 
-## Development
+Apresenta tambem um front-end em react com uma tela para consulta de dados e interface de administração do sistema.
 
-Before you can build this project, you must install and configure the following dependencies on your machine:
+Projeto criado com [JHipster](https://start.jhipster.tech). Mais informações podem ser encontradas no arquivo [README-jhipster.md](./README-jhipster.md).
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
+## Dependências
 
-After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
+As seguintes dependências são necessárias para a execução do projeto a partir do código fonte:
 
-    npm install
+- Node.js (na última versão LTS)
 
-We use npm scripts and [Webpack][] as our build system.
+  - Java 11
 
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
+  Para instalação das demais dependências necessárias basta executar:
+
+  ```
+  npm install
+  ```
+
+  neste diretório, e caso não não haja uma instalação local do [Maven](https://maven.apache.org), utilizar o wrapper `./mvnw` em seu lugar.
+
+## Execução do projeto
+
+Para executar a aplicação em modo de desenvolvimento (com banco de dados H2 local com dados fictícios), executar os seguintes comandos:
 
     ./mvnw
     npm start
 
-Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
-Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
+## APIs
 
-The `npm run` command will list all of the scripts available to run for this project.
+As APIs REST duisponibilizadas pelo sistema podem ser consultadas e testadas via interface administrativa no path `/admin/docs`. No modo de desenvolvimento, a interface administrativa pode ser acessada com as credenciais admin:admin
 
-### Service workers
+Por conveniência algumas APIs estão disponíveis para consulta sem autenticação, a saber:
 
-Service workers are commented by default, to enable them please uncomment the following code.
+- `GET /api/categories` - Lista as categorias de roupas disponíveis, com paginação opcional.
+  Parâmetros:
+- page: nº da página caso se deseje fazer a busca com paginação (início em 0)
+- size: tamanho da página em caso de busca com paginação
+- sort: string no formato `(id|name)(,asc|,desc)?`para ordenação dos resultados.
 
-- The service worker registering script in index.html
-
-```html
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(function() {
-      console.log('Service Worker Registered');
-    });
-  }
-</script>
-```
-
-Note: workbox creates the respective service worker and dynamically generate the `service-worker.js`
-
-### Managing dependencies
-
-For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
-
-    npm install --save --save-exact leaflet
-
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
-
-    npm install --save-dev --save-exact @types/leaflet
-
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
-Note: there are still few other things remaining to do for Leaflet that we won't detail here.
-
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
-
-## Building for production
-
-### Packaging as jar
-
-To build the final jar and optimize the pluscape application for production, run:
-
-    ./mvnw -Pprod clean verify
-
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
-To ensure everything worked, run:
-
-    java -jar target/*.jar
-
-Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
-
-Refer to [Using JHipster in production][] for more details.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
-
-    ./mvnw -Pprod,war clean verify
-
-## Testing
-
-To launch your application's tests, run:
-
-    ./mvnw verify
-
-### Client tests
-
-Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
-
-    npm test
-
-For more information, refer to the [Running tests page][].
-
-### Code quality
-
-Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
+Resultado: Uma lista de itens no formato (em JSON):
 
 ```
-docker-compose -f src/main/docker/sonar.yml up -d
+{
+  "id": [identificador único da categoria],
+  "name": [descrição (também única) da categoria]
+}
 ```
 
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
+- `GET /api/products/categories` - Lista os produtos (roupas) disponíveis por categoria, ordenados por default em ordem decrescente de preço atual. Parâmetros:
+- category: nome da categoria
+- page: nº da página caso se deseje fazer a busca com paginação (início em 0)
+- size: tamanho da página em caso de busca com paginação
+- sort: string no formato `propriedade(,asc|,desc)?`para ordenação dos resultados.
 
-Then, run a Sonar analysis:
-
-```
-./mvnw -Pprod clean verify sonar:sonar
-```
-
-If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
+Resultado: Uma lista de itens no formato (em JSON):
 
 ```
-./mvnw initialize sonar:sonar
+{
+"categories": [lista de categorias no formato definido acima],
+"currentPrice": [preço atual do produto (e.g. com desconto)],
+"description": [descrição por extenso do produto],
+"id": [identificador único do produto],
+"link": [link para a página do produto no site original],
+"name": [nome/descrição curta do produto],
+"picture": [byte array referente a uma imagem do produto],
+"pictureContentType": [formato da imagem como esperado em um header Content-Type, e.g. image/png],
+"sizes": [ lista de tamanhos disponíveis, no formato:
+{
+  "description": [descrição (única) do tamanho, e.g. P, M, GG],
+  "id": [ identificador único do tamanho ]
+}
+],
+"standardPrice": [ preço normal (e.g. sem descontos) do produto ]
+}
 ```
 
-or
+## Build/execução do projeto em modo de produção
 
-For more information, refer to the [Code quality page][].
+Para build/execução do projeto em modo de produção basta gerar o JAR do projeto com o perfil `prod` além dos demais perfis desejados, e.g.:
 
-## Using Docker to simplify development (optional)
+```
+./mvnw -Pprod,swagger clean verify
+```
 
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
+e executar o jar gerado com
 
-For example, to start a postgresql database in a docker container, run:
+```
+java -jar target/*.jar
+```
 
-    docker-compose -f src/main/docker/postgresql.yml up -d
+Mais informações podem ser encontradas no arquivo `README-jhipster.md`.
 
-To stop it and remove the container, run:
+Para alteração de configurações da aplicação, pode-se sobrescrever as propriedades presentes no arquivo [application.yml] via variáveis de ambiente, parâmetros de linha de comando ou fornecendo um arquivo de configuração suplementar. Mais informações no próprio arquivo application.yml e/ou nos links:
 
-    docker-compose -f src/main/docker/postgresql.yml down
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-    ./mvnw -Pprod verify jib:dockerBuild
-
-Then run:
-
-    docker-compose -f src/main/docker/app.yml up -d
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.1.0 archive]: https://www.jhipster.tech/documentation-archive/v6.1.0
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.1.0/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.1.0/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.1.0/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v6.1.0/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v6.1.0/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.1.0/setting-up-ci/
-[node.js]: https://nodejs.org/
-[yarn]: https://yarnpkg.org/
-[webpack]: https://webpack.github.io/
-[angular cli]: https://cli.angular.io/
-[browsersync]: http://www.browsersync.io/
-[jest]: https://facebook.github.io/jest/
-[jasmine]: http://jasmine.github.io/2.0/introduction.html
-[protractor]: https://angular.github.io/protractor/
-[leaflet]: http://leafletjs.com/
-[definitelytyped]: http://definitelytyped.org/
+- https://www.jhipster.tech/profiles/
+- https://www.jhipster.tech/common-application-properties/
+- http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
