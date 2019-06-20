@@ -15,3 +15,4 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod,swagger
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pluscape
+      SERVER_SERVLET_CONTEXT_PATH: /pluscape
