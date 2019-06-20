@@ -2,28 +2,29 @@
   "pluscapeApp": {
     "product": {
       "home": {
-        "title": "Products",
-        "createLabel": "Criar novo Product",
-        "createOrEditLabel": "Criar ou editar Product",
-        "notFound": "No Product found"
+        "title": "Produtos",
+        "createLabel": "Criar novo Produto",
+        "createOrEditLabel": "Criar ou editar Produto",
+        "notFound": "Nenhum produto encontrado",
+        "found": "{{ param }} produto(s) encontrado(s)"
       },
-      "created": "Um novo Product foi criado com o identificador {{ param }}",
-      "updated": "Um Product foi atualizado com o identificador {{ param }}",
-      "deleted": "Um Product foi excluído com o identificador {{ param }}",
+      "created": "Um novo Produto foi criado com o identificador {{ param }}",
+      "updated": "Um Produto foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Produto foi excluído com o identificador {{ param }}",
       "delete": {
-        "question": "Tem certeza de que deseja excluir Product {{ id }}?"
+        "question": "Tem certeza de que deseja excluir o Produto {{ id }}?"
       },
       "detail": {
-        "title": "Product"
+        "title": "Produto"
       },
       "name": "Name",
-      "description": "Description",
-      "currentPrice": "Current Price",
-      "standardPrice": "Standard Price",
+      "description": "Descrição",
+      "currentPrice": "Preço Promocional",
+      "standardPrice": "Preço Padrão",
       "link": "Link",
-      "picture": "Picture",
-      "sizes": "Sizes",
-      "categories": "Categories"
+      "picture": "Imagem",
+      "sizes": "Tamanhos",
+      "categories": "Categorias"
     }
   }
 }

@@ -17,6 +17,7 @@ import reducer, {
 } from 'app/entities/product/product.reducer';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IProduct, defaultValue } from 'app/shared/model/product.model';
+import { ICategory } from 'app/shared/model/category.model';
 
 // tslint:disable no-invalid-template-strings
 describe('Entities reducer tests', () => {
@@ -32,6 +33,7 @@ describe('Entities reducer tests', () => {
     loading: false,
     errorMessage: null,
     entities: [] as ReadonlyArray<IProduct>,
+    categories: [] as ReadonlyArray<ICategory>,
     entity: defaultValue,
     links: {
       next: 0

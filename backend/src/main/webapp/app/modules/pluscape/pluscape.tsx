@@ -5,12 +5,13 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Container, Col, Row, Table } from 'reactstrap';
+import Select from 'react-select';
 // tslint:disable-next-line:no-unused-variable
 import { openFile, byteSize, Translate, ICrudGetAllAction, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities, reset } from 'app/entities/product/product.reducer';
+import { getEntitiesPerCategory as getProducts, getCategories, reset } from 'app/entities/product/product.reducer';
 import { IProduct } from 'app/shared/model/product.model';
 // tslint:disable-next-line:no-unused-variable
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -18,11 +19,14 @@ import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 
 export interface IProductProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export type IProductState = IPaginationBaseState;
+export interface IPluscapeState extends IPaginationBaseState {
+  category: string;
+}
 
-export class Pluscape extends React.Component<IProductProps, IProductState> {
-  state: IProductState = {
+export class Pluscape extends React.Component<IProductProps, IPluscapeState> {
+  state: IPluscapeState = {
     ...getSortState(this.props.location, 3),
+    category: null,
     sort: 'currentPrice',
     order: 'desc'
   };
@@ -40,18 +44,25 @@ export class Pluscape extends React.Component<IProductProps, IProductState> {
   reset = () => {
     this.props.reset();
     this.setState({ activePage: 1 }, () => {
-      this.getEntities();
+      this.getCategories();
+    });
+  };
+
+  handleCategorySelection = selectedCategory => {
+    this.props.reset();
+    this.setState({ category: selectedCategory.value }, () => {
+      this.getProducts();
     });
   };
 
   handleLoadMore = () => {
     if (window.pageYOffset > 0) {
-      this.setState({ activePage: this.state.activePage + 1 }, () => this.getEntities());
+      this.setState({ activePage: this.state.activePage + 1 }, () => this.getProducts());
     }
   };
 
   loadMore = () => {
-    this.setState({ activePage: this.state.activePage + 1 }, () => this.getEntities());
+    this.setState({ activePage: this.state.activePage + 1 }, () => this.getProducts());
     /*this.reset();*/
   };
 
@@ -69,15 +80,37 @@ export class Pluscape extends React.Component<IProductProps, IProductState> {
 
   hasMore = () => this.state.activePage - 1 < this.props.links.next;
 
-  getEntities = () => {
-    const { activePage, itemsPerPage, sort, order } = this.state;
-    this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
+  getProducts = () => {
+    const { activePage, itemsPerPage, sort, order, category } = this.state;
+    this.props.getProducts(category, activePage - 1, itemsPerPage, `${sort},${order}`);
+  };
+
+  getCategories = () => {
+    this.props.getCategories();
   };
 
   render() {
-    const { productList, match } = this.props;
+    const { productList, categoryList, totalItems } = this.props;
     return (
       <div>
+        <Row>
+          <Col xs="12" sm="12" md={{ size: 4, offset: 4 }} style={{ marginBottom: '1em' }}>
+            <Select options={categoryList} onChange={this.handleCategorySelection} />
+          </Col>
+        </Row>
+        {totalItems && totalItems > 0 ? (
+          <Row>
+            <Col xs="12" sm="12" md={{ size: 4, offset: 4 }} style={{ marginBottom: '1em' }}>
+              <Translate contentKey="pluscapeApp.product.home.found" interpolate={{ param: totalItems }}>
+                Products found
+              </Translate>
+            </Col>
+          </Row>
+        ) : (
+          <div className="alert alert-warning">
+            <Translate contentKey="pluscapeApp.product.home.notFound">No Products found</Translate>
+          </div>
+        )}
         <div className="table-responsive">
           <InfiniteScroll
             pageStart={this.state.activePage}
@@ -144,9 +177,7 @@ export class Pluscape extends React.Component<IProductProps, IProductState> {
                 </Row>
               </Container>
             ) : (
-              <div className="alert alert-warning">
-                <Translate contentKey="pluscapeApp.product.home.notFound">No Products found</Translate>
-              </div>
+              <Container />
             )}
           </InfiniteScroll>
           <a hidden={!this.hasMore()} onClick={this.loadMore}>
@@ -160,6 +191,7 @@ export class Pluscape extends React.Component<IProductProps, IProductState> {
 
 const mapStateToProps = ({ product }: IRootState) => ({
   productList: product.entities,
+  categoryList: product.categories,
   totalItems: product.totalItems,
   links: product.links,
   entity: product.entity,
@@ -167,7 +199,8 @@ const mapStateToProps = ({ product }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities,
+  getProducts,
+  getCategories,
   reset
 };
 

@@ -5,13 +5,15 @@ import {
   ICrudGetAction,
   ICrudGetAllAction,
   ICrudPutAction,
-  ICrudDeleteAction
+  ICrudDeleteAction,
+  ICrudSearchAction
 } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IProduct, defaultValue } from 'app/shared/model/product.model';
+import { ICategory } from 'app/shared/model/category.model';
 
 export const ACTION_TYPES = {
   FETCH_PRODUCT_LIST: 'product/FETCH_PRODUCT_LIST',
@@ -20,13 +22,16 @@ export const ACTION_TYPES = {
   UPDATE_PRODUCT: 'product/UPDATE_PRODUCT',
   DELETE_PRODUCT: 'product/DELETE_PRODUCT',
   SET_BLOB: 'product/SET_BLOB',
-  RESET: 'product/RESET'
+  RESET: 'product/RESET',
+  FETCH_CATEGORY_LIST: 'category/FETCH_CATEGORY_LIST',
+  FETCH_PRODUCT_PER_CATEGORY_LIST: 'category/FETCH_PRODUCT_PER_CATEGORY_LIST'
 };
 
 const initialState = {
   loading: false,
   errorMessage: null,
   entities: [] as ReadonlyArray<IProduct>,
+  categories: [] as ReadonlyArray<ICategory>,
   entity: defaultValue,
   links: { next: 0 },
   updating: false,
@@ -42,6 +47,8 @@ export default (state: ProductState = initialState, action): ProductState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_PRODUCT_LIST):
     case REQUEST(ACTION_TYPES.FETCH_PRODUCT):
+    case REQUEST(ACTION_TYPES.FETCH_CATEGORY_LIST):
+    case REQUEST(ACTION_TYPES.FETCH_PRODUCT_PER_CATEGORY_LIST):
       return {
         ...state,
         errorMessage: null,
@@ -58,6 +65,8 @@ export default (state: ProductState = initialState, action): ProductState => {
         updating: true
       };
     case FAILURE(ACTION_TYPES.FETCH_PRODUCT_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_CATEGORY_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_PRODUCT_PER_CATEGORY_LIST):
     case FAILURE(ACTION_TYPES.FETCH_PRODUCT):
     case FAILURE(ACTION_TYPES.CREATE_PRODUCT):
     case FAILURE(ACTION_TYPES.UPDATE_PRODUCT):
@@ -70,6 +79,7 @@ export default (state: ProductState = initialState, action): ProductState => {
         errorMessage: action.payload
       };
     case SUCCESS(ACTION_TYPES.FETCH_PRODUCT_LIST):
+    case SUCCESS(ACTION_TYPES.FETCH_PRODUCT_PER_CATEGORY_LIST):
       const links = parseHeaderForLinks(action.payload.headers.link);
 
       return {
@@ -78,6 +88,13 @@ export default (state: ProductState = initialState, action): ProductState => {
         links,
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links),
         totalItems: parseInt(action.payload.headers['x-total-count'], 10)
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_CATEGORY_LIST):
+      const categoryValues = action.payload.data.map(category => ({ label: category.name, value: category.name }));
+      return {
+        ...state,
+        loading: false,
+        categories: categoryValues
       };
     case SUCCESS(ACTION_TYPES.FETCH_PRODUCT):
       return {
@@ -111,8 +128,10 @@ export default (state: ProductState = initialState, action): ProductState => {
         }
       };
     case ACTION_TYPES.RESET:
+      const currentCategories = state.categories;
       return {
-        ...initialState
+        ...initialState,
+        categories: currentCategories
       };
     default:
       return state;
@@ -120,8 +139,26 @@ export default (state: ProductState = initialState, action): ProductState => {
 };
 
 const apiUrl = 'api/products';
+const categoryApiUrl = 'api/categories';
+const productPerCategoryApiUrl = apiUrl + '/category';
 
 // Actions
+
+export const getCategories: ICrudGetAllAction<ICategory> = (page, size, sort) => {
+  const requestUrl = `${categoryApiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_CATEGORY_LIST,
+    payload: axios.get<ICategory>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
+
+export const getEntitiesPerCategory: ICrudSearchAction<IProduct> = (category, page, size, sort) => {
+  const requestUrl = `${productPerCategoryApiUrl}?category=${category}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_PRODUCT_PER_CATEGORY_LIST,
+    payload: axios.get<IProduct>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntities: ICrudGetAllAction<IProduct> = (page, size, sort) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
