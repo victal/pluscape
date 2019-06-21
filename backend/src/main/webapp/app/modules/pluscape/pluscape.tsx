@@ -50,7 +50,7 @@ export class Pluscape extends React.Component<IProductProps, IPluscapeState> {
 
   handleCategorySelection = selectedCategory => {
     this.props.reset();
-    this.setState({ category: selectedCategory.value }, () => {
+    this.setState({ activePage: 1, category: selectedCategory.value }, () => {
       this.getProducts();
     });
   };
@@ -63,7 +63,6 @@ export class Pluscape extends React.Component<IProductProps, IPluscapeState> {
 
   loadMore = () => {
     this.setState({ activePage: this.state.activePage + 1 }, () => this.getProducts());
-    /*this.reset();*/
   };
 
   sort = prop => () => {
