@@ -61,7 +61,7 @@ public class Product implements Serializable {
                inverseJoinColumns = @JoinColumn(name = "sizes_id", referencedColumnName = "id"))
     private Set<Size> sizes = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "product_categories",
                joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),

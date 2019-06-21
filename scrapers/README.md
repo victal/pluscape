@@ -42,9 +42,9 @@ Assim uma execução mais típica do script de carregamento pode ser:
 ```
 DB_USER=user DBPASSWD=senha python main.py
 ```
-Ou, para um teste com uma amostra de dados "reais":
+Ou, para um teste com apenas uma amostra dos dados (cada site tinha ~100 páginas de produtos quando da escrita deste readme):
 ```
-POSTHAUS_MAX_PAGES=5 DISTRITOMODA_MAX_PAGES=3 VKMODAS_MAX_PAGES=5 python main.py
+POSTHAUS_MAX_PAGES=10 DISTRITOMODA_MAX_PAGES=5 VKMODAS_MAX_PAGES=10 python main.py
 ```
 
 ## Docker

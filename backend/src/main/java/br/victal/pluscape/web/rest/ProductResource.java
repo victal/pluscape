@@ -119,8 +119,8 @@ public class ProductResource {
      */
     @ApiOperation(value = "Get all products per category", response = Product.class, responseContainer = "List")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "page", defaultValue = "0", type = "int"),
-        @ApiImplicitParam(name = "size", defaultValue = "3", type = "int")
+        @ApiImplicitParam(name = "page", defaultValue = "0", type = "int", required = true),
+        @ApiImplicitParam(name = "size", defaultValue = "3", type = "int", required = true)
     })
     @GetMapping("/products/category")
     public ResponseEntity<List<Product>> getAllProductsByCategory(

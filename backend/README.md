@@ -11,16 +11,16 @@ Projeto criado com [JHipster](https://start.jhipster.tech). Mais informações p
 As seguintes dependências são necessárias para a execução do projeto a partir do código fonte:
 
 - Node.js (na última versão LTS)
+- Java 11
+- Um banco de dados postgresql (para execução em modo de produção)
 
-  - Java 11
+Para instalação das demais dependências necessárias basta executar:
 
-  Para instalação das demais dependências necessárias basta executar:
+```
+npm install
+```
 
-  ```
-  npm install
-  ```
-
-  neste diretório, e caso não não haja uma instalação local do [Maven](https://maven.apache.org), utilizar o wrapper `./mvnw` em seu lugar.
+neste diretório, e caso não não haja uma instalação local do [Maven](https://maven.apache.org), utilizar o wrapper `./mvnw` em seu lugar.
 
 ## Execução do projeto
 
@@ -92,10 +92,12 @@ e executar o jar gerado com
 java -jar target/*.jar
 ```
 
-Mais informações podem ser encontradas no arquivo `README-jhipster.md`.
+Em modo de produção, a aplicação apenas cria a estrutura necessária no banco de dados configurado, mas não gera uma massa de dados de teste. Os scripts disponibilizados em [../scrapers] podem ser utilizados para popular a base após sua criação pela aplicação.
 
 Para alteração de configurações da aplicação, pode-se sobrescrever as propriedades presentes no arquivo [application.yml] via variáveis de ambiente, parâmetros de linha de comando ou fornecendo um arquivo de configuração suplementar. Mais informações no próprio arquivo application.yml e/ou nos links:
 
 - https://www.jhipster.tech/profiles/
 - https://www.jhipster.tech/common-application-properties/
 - http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+
+Mais informações podem ser encontradas no arquivo `README-jhipster.md`.

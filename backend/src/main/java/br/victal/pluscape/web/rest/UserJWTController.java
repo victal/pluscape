@@ -6,6 +6,7 @@ import br.victal.pluscape.web.rest.vm.LoginVM;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.annotations.Api;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/api")
+@Api(hidden = true)
 public class UserJWTController {
 
     private final TokenProvider tokenProvider;

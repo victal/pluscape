@@ -30,7 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         countQuery = "select count(distinct product) from Product product")
     Page<Product> findAllWithEagerRelationshipsByCategory(Pageable pageable, @Param("category") String category);
 
-    @Query(value = "select distinct product from Product product left join product.categories c where c.name = :category")
+    @Query(value = "select distinct product from Product product left join product.categories c where c.name = :category order by product.currentPrice desc")
     Page<Product> findAllByCategory(Pageable pageable, @Param("category") String category);
 
 }

@@ -12,6 +12,7 @@ import br.victal.pluscape.web.rest.errors.*;
 import br.victal.pluscape.web.rest.vm.KeyAndPasswordVM;
 import br.victal.pluscape.web.rest.vm.ManagedUserVM;
 
+import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api")
+@Api(hidden = true)
 public class AccountResource {
 
     private static class AccountResourceException extends RuntimeException {
