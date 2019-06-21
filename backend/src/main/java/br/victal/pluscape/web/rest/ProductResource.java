@@ -7,10 +7,7 @@ import br.victal.pluscape.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +32,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@Api(description = "Operações em produtos")
 public class ProductResource {
 
     private final Logger log = LoggerFactory.getLogger(ProductResource.class);

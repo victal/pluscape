@@ -6,6 +6,7 @@ import br.victal.pluscape.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@Api(description = "Operações em tamanhos")
 public class SizeResource {
 
     private final Logger log = LoggerFactory.getLogger(SizeResource.class);

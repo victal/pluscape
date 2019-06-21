@@ -95,7 +95,7 @@ export class Pluscape extends React.Component<IProductProps, IPluscapeState> {
       <div>
         <Row>
           <Col xs="12" sm="12" md={{ size: 4, offset: 4 }} style={{ marginBottom: '1em' }}>
-            <Select options={categoryList} onChange={this.handleCategorySelection} />
+            <Select options={categoryList} onChange={this.handleCategorySelection} placeholder="Escolha uma Categoria..." />
           </Col>
         </Row>
         {totalItems && totalItems > 0 ? (
